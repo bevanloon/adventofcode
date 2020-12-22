@@ -1,4 +1,25 @@
 defmodule AOC do
+
+  def part2data(filename) do
+    data = File.read!(filename)
+    |> String.split("\n", trim: true)
+    |> Enum.map(&String.to_integer/1)
+
+    data = Enum.sort([0 | data], :desc)
+    part2(data)
+  end
+
+  def part2(data) do
+    Enum.reduce(data, %{(hd(data) + 3) => 1}, fn i, memo ->
+      IO.inspect(i)
+      IO.inspect(memo)
+      IO.puts("---")
+      Map.put(memo, i, Enum.sum(Enum.map(1..3, &Map.get(memo, i + &1, 0))))
+    end)|> IO.inspect
+  end
+
+
+
   def input(filename) do
     blah = File.read!(filename)
     |> String.split("\n", trim: true)
@@ -108,10 +129,13 @@ ExUnit.start()
 defmodule AOCTest do
   use ExUnit.Case, async: true
   import AOC
-
-  test "input" do
-    input("input.txt")
-    |> List.last
-    |> IO.inspect
+  test "part2" do
+    part2data("input.txt.med")
   end
+
+  # test "input" do
+  #   input("input.txt")
+  #   |> List.last
+  #   |> IO.inspect
+  # end
 end
