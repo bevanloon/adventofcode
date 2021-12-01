@@ -3,11 +3,11 @@ def input
 end
 
 def part1
-  inc = 0
-  input.each_line.each_cons(2) do |depths|
-    inc += 1 if depths.first.to_i < depths.last.to_i
+  out = input.each_line.each_cons(2).count do |depths|
+    depths.first.to_i < depths.last.to_i
   end
-  puts "part 1: #{inc}"
+
+  puts "part 1: #{out}"
 end
 
 def part2
@@ -15,11 +15,11 @@ def part2
     window[0].to_i + window[1].to_i + window[2].to_i
   end
 
-  inc = 0
-  sums.each_cons(2) do |items|
-    inc += 1 if items.first < items.last
+  out = sums.each_cons(2).count do |items|
+    items.first < items.last
   end
-  puts "part 2: #{inc}"
+
+  puts "part 2: #{out}"
 end
 
 part1
