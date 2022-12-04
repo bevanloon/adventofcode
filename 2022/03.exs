@@ -1,52 +1,35 @@
 defmodule Backpack do
-  def part_1 do
+  def get_input do
     File.read!("input/day03.txt")
     |> String.trim
     |> String.split
-    |> solve
   end
 
-  def part_2 do
-    File.read!("input/day03.txt")
-    |> String.trim
-    |> String.split
-    |> Enum.chunk_every(3)
-    |> Enum.map(fn x -> intersection_of(x) end)
-    |> Enum.map(fn x ->
-        codepoint = hd(to_charlist(x))
-        cond do
-          String.upcase(x) != x -> codepoint - 96
-          true -> codepoint - 38
-        end
-    end)
+  def part_1 do
+    get_input()
+    |> Enum.map(&items_in_both_compartments(&1))
+    |> Enum.map(&score(&1))
     |> Enum.sum
   end
 
-  def intersection_of(three) do
-    a = three |> Enum.at(0) |> String.graphemes |> Enum.into(MapSet.new)
-    b = three |> Enum.at(1) |> String.graphemes |> Enum.into(MapSet.new)
-    c = three |> Enum.at(2) |> String.graphemes |> Enum.into(MapSet.new)
-    a
-    |> MapSet.intersection(b)
-    |> MapSet.intersection(c)
+  def part_2 do
+    get_input()
+    |> Enum.chunk_every(3)
+    |> Enum.map(&intersection_of(&1))
+    |> Enum.map(&score(&1))
+    |> Enum.sum
+  end
+
+  def intersection_of([a, b, c]) do
+    into_mapset(a)
+    |> MapSet.intersection(into_mapset(b))
+    |> MapSet.intersection(into_mapset(c))
     |> MapSet.to_list
     |> hd
   end
 
-  # a - z = 1 to 26
-  # A - Z = 27 to 52
-  # Elixir - ?a == 97 and ?A == 65
-  def solve(backpacks) do
-    backpacks
-    |> Enum.map(&items_in_both_compartments(&1))
-    |> Enum.map(fn x ->
-        codepoint = hd(to_charlist(x))
-        cond do
-          String.upcase(x) != x -> codepoint - 96
-          true -> codepoint - 38
-        end
-    end)
-    |> Enum.sum
+  def into_mapset(item) do
+    item |> String.graphemes |> Enum.into(MapSet.new)
   end
 
   def items_in_both_compartments(string) do
@@ -55,7 +38,22 @@ defmodule Backpack do
     String.graphemes(left)
     |> Enum.find(&String.contains?(right, &1))
   end
+
+  # a - z = 1 to 26
+  # A - Z = 27 to 52
+  # Elixir - ?a == 97 and ?A == 65
+  def score(item) do
+    code = item |> to_charlist |> hd
+    cond do
+      String.upcase(item) != item -> code - 96
+      true -> code - 38
+    end
+  end
 end
 
 IO.inspect(Backpack.part_1)
 IO.inspect(Backpack.part_2)
+{time, result} = :timer.tc(&Backpack.part_2/0)
+IO.puts("")
+IO.puts(time)
+IO.puts(result)
